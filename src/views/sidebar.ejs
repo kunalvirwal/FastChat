@@ -1,0 +1,37 @@
+<nav class="d-none d-sm-block sidebar"
+    style="width:30vw; max-width:300px;height:100vh; background-color: var(--bg-my-color); border-right: 1px rgba(255, 255, 255, 0.32) solid; position:fixed;">
+        <div style="width:100%; height:20%; padding-top:3vh; padding-left:2vw; font-weight:800; font-size:calc(min(3vw,2.5rem)); color:var(--my-green);"  class="text-left">
+            FastChat
+        </div>
+        <div class="position-sticky" style="width:100%; height:50%; ">
+            
+            <div class="list-group list-group-flush bg-myitem" >
+
+                <a href="/home"
+                    class="list-group-item list-group-item-action bg-myitem ripple <% if (path=="/home") { %> on <% } %>">
+                    <i class="fas fa-regular fa-house me-3"></i><span>Home</span>
+                </a>
+
+                <a href=""
+                    class="list-group-item list-group-item-action bg-myitem ripple <% if (path=="/llm") { %> on <% } %> ">
+                    <i class="fas fa-microchip fa-fw me-3"></i><span>Llama 3</span>
+                </a>
+
+                <a href=""
+                    class="list-group-item list-group-item-action bg-myitem ripple">  <!-- TODO: add path check -->
+                    <i class="fas fa-message fa-fw me-3"></i><span>Chats</span>
+                </a>
+
+                <a href="#" class="list-group-item list-group-item-action bg-myitem ripple">   <!-- TODO: add path check -->
+                    <i class="fas fa-users fa-fw me-3"></i><span>Friends</span>
+                </a>
+                <a href="#" class="list-group-item list-group-item-action bg-myitem ripple">   <!-- TODO: add path check -->
+                    <i class="fas fa-gears fa-fw me-3"></i><span>Settings</span>
+                </a>
+                <a href="/logout" id="line" class="list-group-item list-group-item-action bg-myitem ripple">
+                    <i class="fas fa-power-off fa-fw me-3"></i><span>Logout</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+    <!-- navbar end -->

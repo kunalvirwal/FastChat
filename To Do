@@ -1,3 +1,16 @@
 - enable token verification
 - id password
-- 
+- [
+  {
+    _id: new ObjectId('66a4fa094d3957573fe19d41'),
+    name: 'Pawan',
+    email: 'p@p',
+    password: 'P',
+    chats: 0,
+    createdAt: 2024-07-27T13:45:45.760Z,
+    updatedAt: 2024-07-27T13:45:45.760Z,
+    __v: 0
+  }
+]
+
+- popover
