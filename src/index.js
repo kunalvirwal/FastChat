@@ -1,11 +1,15 @@
 const express = require("express");
-const path = require("path");
-const cookieParser = require("cookie-parser");
 const app = express();
+const http = require('http').createServer(app);
+const io = require('socket.io')(http);
+
+const cookieParser = require("cookie-parser");
+const path = require("path");
 require("dotenv").config();
 
 const middlewares = require("./middlewares/Middlewares")
 const configs = require("./configs/Database")
+const socketUtils = require("./socketUtils/SocketUtils")
 
 
 const PORT = process.env.PORT || 5000;
@@ -17,11 +21,14 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// app.use("",middlewares.authenticate_token)
-app.use("",middlewares.auth_user)
+app.use(express.static(path.join(__dirname, 'views','static')));
 
+app.use("",middlewares.auth_user)
 app.use("", require("./routes/Routes")); 
 
-app.listen(PORT,(error)=>{
+socketUtils.socketHandler(io)
+
+
+http.listen(PORT,(error)=>{
     if (error) throw error;
 })

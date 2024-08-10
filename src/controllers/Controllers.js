@@ -1,5 +1,4 @@
 const utils = require("../utils/Utils")
-const routes =  require("../routes/Routes")
 const models = require("../models/Schema")
 const bcrypt = require("bcrypt")
 const mongoose = require("mongoose")
@@ -43,8 +42,6 @@ async function login(req,res){
 }
 
 
-
-
 async function dashboard(req,res){
     //////////////////////////////////////////////////////////////////
     let selfID = req.user.uuid
@@ -77,12 +74,14 @@ async function createChat(req,res){
     let chatPassword = req.body.chatPassword
     let result = await models.User.find({_id:req.user.uuid})
     if (result[0]["chats"].length<5){
+        let d = new Date(Date.now())
+        let dateNtime = String(d).slice(4, 15)+" "+d.getHours()+":"+d.getMinutes()
         let chat = new models.Chat({
             name:chatName,
             admin:{uuid:selfID, name:selfName},
             password:chatPassword,
             actives:[{uuid:selfID , name:selfName}],
-            messages:[],
+            messages:[{sender:"system" , content:(selfName+" created "+chatName) , sentAt:dateNtime}], 
         })
         let newchat = await chat.save()
         let user = result[0]
@@ -111,9 +110,13 @@ async function joinChat(req,res){
         return res.status(401).redirect("/home?wp=true")
     }
     if (!chat["actives"].includes({uuid:selfID, name: selfName})){
-        console.log("Does not have")
         chat["actives"].push({uuid:selfID, name: selfName})
+        let d = new Date(Date.now())
+        let dateNtime = String(d).slice(4, 15)+" "+d.getHours()+":"+d.getMinutes()
+        chat["messages"].push({sender:"system" , content:(selfName+" joined") , sentAt:dateNtime})
     }
+    // TODO : person left messages will requere a seperate socket request
+
     await chat.save()
     return res.status(202).redirect("/home");
 }
@@ -128,35 +131,8 @@ async function chat(req,res){
     if (result.length == 0){
         return res.status(404).redirect("/home")
     }
-    // let chat = result[0]
-    let chat = {
-        _id: '66ad84f24cacb59cdbbb89db',
-        name: "Kunal's chatroom",
-        admin:  {uuid:'66ad089e248902c3c3565d55',name:"Kunal"},
-        password: 'ECC103',
-        actives: [ 
-            {uuid:'66ad089e248902c3c3565d55',name:"Kunal"},
-            {uuid:'66a77ab9474648dbee06ecef', name:"Shul"}
-         ],
-        messages: [
-            {sender:"system",content:"Kunal created Kunal's chatroom",sentAt:"Sep 11 2023 08:01"},
-            {sender:"system",content:"Shul joined",sentAt:"Sep 11 2023 08:01"},
-            {sender:"66ad089e248902c3c3565d55",content:"Hiii WhatsUp",sentAt:"Sep 11 2023 08:01"},
-            {sender:"66a77ab9474648dbee06ecef",content:"heyyy dude, I am fine, you tell",sentAt:"Sep 11 2023 08:01"},
-            {sender:"66ad089e248902c3c3565d55",content:"Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatum sunt magni sint facilis, molestias error quod ratione mollitia voluptatibus, cupiditate vitae suscipit ducimus sed pariatur, debitis odit. Assumenda, consectetur ipsam!",sentAt:"Sep 11 2023 08:01"},
-            {sender:"66a77ab9474648dbee06ecef",content:"Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatum sunt magni sint facilis, molestias error quod ratione mollitia voluptatibus, cupiditate vitae suscipit ducimus sed pariatur, debitis odit. Assumenda, consectetur ipsam!",sentAt:"Sep 11 2023 08:01"},
-            {sender:"66a77ab9474648dbee06ecef",content:"Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatum sunt magni sint facilis, molestias error quod ratione mollitia voluptatibus, cupiditate vitae suscipit ducimus sed pariatur, debitis odit. Assumenda, consectetur ipsam!",sentAt:"Sep 11 2023 08:01"},
-            {sender:"66a77ab9474648dbee06ecef",content:"Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatum sunt magni sint facilis, molestias error quod ratione mollitia voluptatibus, cupiditate vitae suscipit ducimus sed pariatur, debitis odit. Assumenda, consectetur ipsam!",sentAt:"Sep 11 2023 08:01"},
-            {sender:"66a77ab9474648dbee06ecef",content:"Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatum sunt magni sint facilis, molestias error quod ratione mollitia voluptatibus, cupiditate vitae suscipit ducimus sed pariatur, debitis odit. Assumenda, consectetur ipsam!",sentAt:"Sep 11 2023 08:01"},
-            {sender:"66a77ab9474648dbee06ecef",content:"Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatum sunt magni sint facilis, molestias error quod ratione mollitia voluptatibus, cupiditate vitae suscipit ducimus sed pariatur, debitis odit. Assumenda, consectetur ipsam!",sentAt:"Sep 11 2023 08:01"},
-            {sender:"66a77ab9474648dbee06ecef",content:"Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatum sunt magni sint facilis, molestias error quod ratione mollitia voluptatibus, cupiditate vitae suscipit ducimus sed pariatur, debitis odit. Assumenda, consectetur ipsam!",sentAt:"Sep 11 2023 08:01"},
 
-        ],
-        __v: 0
-    }
-    // new String(new Date(Date.now())).slice(4, 15); 
-    return res.status(302).render("chat.ejs",{chat:chat, path:req.path,selfID:selfID});
-
+    return res.status(302).render("chat.ejs",{chat:result[0], path:req.path,selfID:selfID});
 
 
 }

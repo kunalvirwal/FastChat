@@ -10,10 +10,10 @@
         :root{
             --my-green:#2eff74;
             --bg-my-color:#0c0d0c;
-            --light-grey:rgb(255,255,255,0.4);
+            --light-grey:#ffffff66;
             --lighter-grey:#f1f6ff;
             --textbox-grey:#f1f6ff44;
-            --dark-grey:rgba(255, 255, 255, 0.676);
+            --dark-grey:#ced4d3;
             
         }
         body{
@@ -64,9 +64,8 @@
             scrollbar-color: #313336 var(--bg-my-color);
           }
         /* for scroll bar*/
-
-
     </style>
+
 </head>
 <body style="background-color:var(--bg-my-color);" class="d-flex flex-row">
     
@@ -77,13 +76,13 @@
 
     <div  style="width: calc(100vw - min(300px, 30vw)); margin-left:min(30vw,300px); position:fixed;">
         <div style="width:100%; height:min(10vh,100px); background-color:var(--bg-my-color); border-bottom: 1px var(--light-grey) solid; " class="d-flex flex-row align-items-center px-4" >
-            <div style="color:white; font-size:max(3vw,2rem);" class="align-bottom"><%= chat.name %></div>
+            <div style="color:white; font-size:max(2vw,2rem);" class="align-bottom"><%= chat.name %></div>
             <span class="fs-5 align-bottom text-secondary mx-2 " style="height:25%;">(<%= chat.actives.length %> members)</span>
 
         </div>
     </div>
-    <div class="d-flex flex-column">
-        <div class="scrollbar scrollbar-primary" id="chat" style="width: calc(100vw - min(300px, 30vw)); margin-left:min(30vw,300px); margin-top:min(10vh,100px); overflow-y:scroll; overflow-x:hidden; height:auto;">
+    <div class="d-flex flex-column justify-content-between">
+        <div class="scrollbar scrollbar-primary" id="chat-box" style="width: calc(100vw - min(300px, 30vw)); margin-left:min(30vw,300px); margin-top:min(10vh,100px); overflow-y:scroll; overflow-x:hidden; height:auto;">
 
             <% chat.messages.forEach(message => { %>
             
@@ -97,20 +96,20 @@
                 
                 <% if (message.sender== selfID) { %>       
                     <div class="my-3 me-3 d-flex justify-content-end">
-                        <div class=" fs-5 d-inline text-start px-3 py-1 text-start" style="max-width:80%; border:1px var(--dark-grey) solid; color:black; font-family:Arial; font-weight:525; background-color:var(--lighter-grey); border-radius:1rem 2px 1rem 1rem;">
+                        <div class=" fs-5 d-inline text-start px-3 py-1 text-start" style="max-width:80%; border:1px var(--dark-grey) solid; color:black; font-family:Arial; font-weight:525; background-color:var(--dark-grey); border-radius:1rem 2px 1rem 1rem;">
                             <%= message.content %>
                         </div>
                     </div>
 
                 <% } else if (message.sender!= "system") { %>       
                     <div class="my-3 ms-3 d-flex justify-content-start w-100" >
-                        <div class=" fs-5 d-inline text-left " style="max-width:80%; border:1px var(--dark-grey) solid; color:black; font-family:Arial; font-weight:525; background-color:var(--lighter-grey); border-radius:2px 1rem 1rem 1rem;">
+                        <div class=" fs-5 d-inline text-left " style="max-width:80%;min-width:10%; border:1px var(--dark-grey) solid; color:black; font-family:Arial; font-weight:525; background-color:var(--lighter-grey); border-radius:2px 1rem 1rem 1rem;">
                             <div class="text-start fs-6 fw-bold px-3" style="color:var(--bg-my-color); background-color:var(--my-green); width:min-content; border-radius:0 0 1rem 0;">
                                 <% for (let i = 0; i < chat.actives.length; i++) { %>
                                     <% if (chat.actives[i].uuid === message.sender) { %>
                                         <%= chat.actives[i].name %>
                                         <% break %>
-                                    <% } %>
+                                    <% } %> 
                                 <% } %>
                             </div>
                             <div class="mx-2 px-2 my-2">
@@ -123,9 +122,9 @@
         </div>
 
         <div  style="width: calc(100vw - min(300px, 30vw)); margin-left:min(30vw,300px); ">
-            <form class="d-flex flex-row my-2" action="" method="POST">
-                <textarea type="textarea" name="msg" class="mx-2 w-100 px-3 py-1 fw-normal fs-4" rows=1 style="min-height:6vh; background-color:var(--textbox-grey); color: white; border-radius: 2rem; border: none; overflow: hidden;" required></textarea>
-                <button type="submit" class="btn me-2" style="border-radius:2rem; height:3rem; background-color:var(--my-green); width:max(6vw,3.25rem);"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <form class="d-flex flex-row my-2 typer-form" action="" >
+                <textarea type="textarea" name="msg" class="mx-2 w-100 px-3 py-1 fw-normal fs-4 typer" rows=1 style="min-height:6vh; background-color:var(--textbox-grey); color: white; border-radius: 2rem; border: none; overflow: hidden;" required></textarea>
+                <button type="submit" class="btn me-2 send-btn" style="border-radius:2rem; height:3rem; background-color:var(--my-green); width:max(6vw,3.25rem);"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M21.4258 11.0952L4.42576 3.09517C4.25458 3.01462 4.06406 2.98428 3.87632 3.00768C3.68859 3.03108 3.51134 3.10725 3.36516 3.22735C3.21899 3.34745 3.10988 3.50656 3.05051 3.68619C2.99114 3.86582 2.98395 4.05861 3.02976 4.24217L4.24176 9.09117L11.9998 12.0002L4.24176 14.9092L3.02976 19.7582C2.98309 19.9419 2.98968 20.135 3.04877 20.3151C3.10787 20.4952 3.21702 20.6547 3.36346 20.7751C3.5099 20.8954 3.68757 20.9715 3.8757 20.9946C4.06382 21.0176 4.25461 20.9866 4.42576 20.9052L21.4258 12.9052C21.5976 12.8244 21.7428 12.6964 21.8446 12.5362C21.9463 12.3759 22.0004 12.19 22.0004 12.0002C22.0004 11.8103 21.9463 11.6244 21.8446 11.4642C21.7428 11.3039 21.5976 11.1759 21.4258 11.0952Z" fill="black"/>
                     </svg></button>
             </form>
@@ -135,14 +134,74 @@
     
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/e77db821fe.js" crossorigin="anonymous"></script>
+    <script src="/socket.io/socket.io.js"></script>    
+
+    <!-- client side websocket code -->
     <script>
+
         const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
         const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
 
-        var element = document.getElementById("chat");
+        var element = document.getElementById("chat-box");
         element.scrollTop = element.scrollHeight;
+        const socket = io()
+       
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.querySelector('.typer-form');
+            const input = document.querySelector('.typer');
+            const send = document.querySelector('.send-btn');
+        
+            send.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (input.value) {
+                    socket.emit('msg',{
+                        msg: input.value, 
+                        chatID:"<%= chat._id %>",
+                        sender:"<%= selfID %>"
+                     });
+                    input.value = '';
+                }
+            }
+        )});
+
+        socket.on('updateChat', chatDetails => {
+            const chatBox = document.getElementById('chat-box');
+            if ("<%= chat._id %>" == chatDetails.chatID){
+                let msgElement
+                if (chatDetails.sender == "system"){
+                    msgElement=`
+                    <div class="my-3 d-flex justify-content-center">
+                        <div class="fs-5 d-inline text-center px-3 py-1 " style="border:1px black solid; color:black; font-family:Arial; font-weight:525; background-color:var(--my-green); border-radius:2rem;">
+                           ${chatDetails.msg} 
+                        </div>
+                    </div>`
+                } else if (chatDetails.sender == "<%= selfID %>"){
+                    msgElement=`
+                    <div class="my-3 me-3 d-flex justify-content-end">
+                        <div class=" fs-5 d-inline text-start px-3 py-1 text-start" style="max-width:80%; border:1px var(--dark-grey) solid; color:black; font-family:Arial; font-weight:525; background-color:var(--dark-grey); border-radius:1rem 2px 1rem 1rem;">
+                           ${chatDetails.msg} 
+                        </div>
+                    </div>`
+                } else {
+                    msgElement=`
+                    <div class="my-3 ms-3 d-flex justify-content-start w-100" >
+                        <div class=" fs-5 d-inline text-left " style="max-width:80%;min-width:10%; border:1px var(--dark-grey) solid; color:black; font-family:Arial; font-weight:525; background-color:var(--lighter-grey); border-radius:2px 1rem 1rem 1rem;">
+                            <div class="text-start fs-6 fw-bold px-3" style="color:var(--bg-my-color); background-color:var(--my-green); width:min-content; border-radius:0 0 1rem 0;">
+                                ${chatDetails.name}
+                            </div>
+                            <div class="mx-2 px-2 my-2">
+                                ${chatDetails.msg} 
+                            </div>
+                        </div>
+                    </div>`
+                }
+                console.log()
+                chatBox.insertAdjacentHTML('beforeend', msgElement);
+                chatBox.scrollTop = chatBox.scrollHeight; // Auto-scroll to the bottom
+            }
+        })
+
     </script>
-    <script src="https://kit.fontawesome.com/e77db821fe.js" crossorigin="anonymous"></script>
-    
 </body>
 </html>
