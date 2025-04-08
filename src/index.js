@@ -12,7 +12,7 @@ const configs = require("./configs/Database")
 const socketUtils = require("./socketUtils/SocketUtils")
 
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 8000;
 
 app.set("view engine","ejs");
 app.set("views", path.resolve("./src/views"));
@@ -29,6 +29,6 @@ app.use("", require("./routes/Routes"));
 socketUtils.socketHandler(io)
 
 
-http.listen(PORT,(error)=>{
+app.listen(PORT,"0.0.0.0",(error)=>{
     if (error) throw error;
 })

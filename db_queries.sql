@@ -1,1 +1,0 @@
-db.user.insertOne({name:"Kunal",email:"k@k",password:"K"})
