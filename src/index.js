@@ -1,7 +1,15 @@
 const express = require("express");
+const { createServer } = require("http");
+const { Server } = require("socket.io");
+
 const app = express();
-const http = require('http').createServer(app);
-const io = require('socket.io')(http);
+const server = createServer(app);
+const io = new Server(server, { 
+    cors: {
+        origin: "*"
+      }
+ });
+
 
 const cookieParser = require("cookie-parser");
 const path = require("path");
@@ -21,7 +29,7 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-app.use(express.static(path.join(__dirname, 'views','static')));
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.use("",middlewares.auth_user)
 app.use("", require("./routes/Routes")); 
@@ -29,6 +37,6 @@ app.use("", require("./routes/Routes"));
 socketUtils.socketHandler(io)
 
 
-app.listen(PORT,"0.0.0.0",(error)=>{
+server.listen(PORT,"0.0.0.0",(error)=>{
     if (error) throw error;
 })

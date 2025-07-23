@@ -131,7 +131,7 @@ async function chat(req,res){
     if (result.length == 0){
         return res.status(404).redirect("/home")
     }
-
+    // console.log(result[0])
     return res.status(302).render("chat.ejs",{chat:result[0], path:req.path,selfID:selfID});
 
 

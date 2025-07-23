@@ -2,8 +2,11 @@ const dbFuncs = require("../models/dbFunctions")
 
 function socketHandler (io){
     io.on("connection",(socket) => {
-        console.log("a user logged in")
-    
+        
+        socket.on("join-chat", (chatId) => {
+            socket.join(chatId);
+        });
+
         socket.on('msg', async (chatDetails) => {
             if (chatDetails.msg.trim() != ""){
                 dbFuncs.CreateMsg(chatDetails.sender,chatDetails.chatID,chatDetails.msg)
@@ -14,8 +17,7 @@ function socketHandler (io){
                         name = chat.actives[i].name
                     }
                 }
-                // console.log(name)
-                io.emit('updateChat',{
+                io.to(chatDetails.chatID).emit('updateChat',{
                     msg: chatDetails.msg, 
                     chatID:chatDetails.chatID,
                     sender:chatDetails.sender,

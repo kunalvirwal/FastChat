@@ -123,7 +123,7 @@
 
         <div  style="width: calc(100vw - min(300px, 30vw)); margin-left:min(30vw,300px); ">
             <form class="d-flex flex-row my-2 typer-form" action="" >
-                <textarea type="textarea" name="msg" class="mx-2 w-100 px-3 py-1 fw-normal fs-4 typer" rows=1 style="min-height:6vh; background-color:var(--textbox-grey); color: white; border-radius: 2rem; border: none; overflow: hidden;" required></textarea>
+                <textarea type="textarea" name="msg" class="mx-2 w-100 px-3 py-1 fw-normal fs-4 typer" rows=1 style="min-height:6vh; background-color:var(--textbox-grey); color: white; border-radius: 2rem; border: none; overflow: hidden; white-space: pre-wrap;" required></textarea>
                 <button type="submit" class="btn me-2 send-btn" style="border-radius:2rem; height:3rem; background-color:var(--my-green); width:max(6vw,3.25rem);"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M21.4258 11.0952L4.42576 3.09517C4.25458 3.01462 4.06406 2.98428 3.87632 3.00768C3.68859 3.03108 3.51134 3.10725 3.36516 3.22735C3.21899 3.34745 3.10988 3.50656 3.05051 3.68619C2.99114 3.86582 2.98395 4.05861 3.02976 4.24217L4.24176 9.09117L11.9998 12.0002L4.24176 14.9092L3.02976 19.7582C2.98309 19.9419 2.98968 20.135 3.04877 20.3151C3.10787 20.4952 3.21702 20.6547 3.36346 20.7751C3.5099 20.8954 3.68757 20.9715 3.8757 20.9946C4.06382 21.0176 4.25461 20.9866 4.42576 20.9052L21.4258 12.9052C21.5976 12.8244 21.7428 12.6964 21.8446 12.5362C21.9463 12.3759 22.0004 12.19 22.0004 12.0002C22.0004 11.8103 21.9463 11.6244 21.8446 11.4642C21.7428 11.3039 21.5976 11.1759 21.4258 11.0952Z" fill="black"/>
                     </svg></button>
@@ -146,13 +146,24 @@
         var element = document.getElementById("chat-box");
         element.scrollTop = element.scrollHeight;
         const socket = io()
-       
+
+        socket.on("connect",()=>{
+            socket.emit("join-chat","<%= chat._id %>");
+        })
+        
+
         document.addEventListener('DOMContentLoaded', () => {
             const form = document.querySelector('.typer-form');
             const input = document.querySelector('.typer');
-            const send = document.querySelector('.send-btn');
-        
-            send.addEventListener('click', (e) => {
+            
+            input.addEventListener('keydown', e => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();      // stop newline
+                form.requestSubmit();    // fires the form’s submit event
+                }
+            });
+
+            form.addEventListener('submit', (e) => {
                 e.preventDefault();
                 if (input.value) {
                     socket.emit('msg',{
@@ -196,7 +207,6 @@
                         </div>
                     </div>`
                 }
-                console.log()
                 chatBox.insertAdjacentHTML('beforeend', msgElement);
                 chatBox.scrollTop = chatBox.scrollHeight; // Auto-scroll to the bottom
             }
