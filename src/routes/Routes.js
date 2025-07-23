@@ -38,8 +38,10 @@ router.get("/chat/:chatID",(req,res)=>{
     controllers.chat(req,res);
 });
 
-router.get("/hello",(req,res)=>{
-    res.send(`HI  ${req.abc}`)
-});
+router.get("/logout", (req, res) => {
+    res.clearCookie("token");
+    res.redirect("/")
+})
+
 
 module.exports = router

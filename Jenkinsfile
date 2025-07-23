@@ -1,6 +1,6 @@
 node {
     def newImage
-    stages{
+    try {
         stage("Clone repository") {
             checkout scm
         }
@@ -13,19 +13,14 @@ node {
                 newImage.push("latest")
             }
         }
-    }
-    post {
-        success {
-            slackSend(
-                color: 'good',
-                message: "Build successful: ${env.JOB_NAME} - ${env.BUILD_NUMBER}\nPushed image to DockerHub."
-            )
-        }
-        failure {
-            slackSend(
-                color: 'danger',
-                message: "Build failed: ${env.JOB_NAME} - ${env.BUILD_NUMBER}"
-            )
-        }
+        slackSend(
+            color: 'good',
+            message: "${env.JOB_NAME} #${env.BUILD_NUMBER}\nJob successfull!!: Pushed image to DockerHub. cc <@kunalvirwal>"
+        )
+    } catch (e) {
+        slackSend(
+            color: 'danger',
+            message: "${env.JOB_NAME} #${env.BUILD_NUMBER}\nBuild failed!? with the error: ${e} <@kunalvirwal>"
+        )
     }
 }
