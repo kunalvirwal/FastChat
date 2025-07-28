@@ -9,13 +9,38 @@ node {
         }
         stage("Push Image") {
             docker.withRegistry("https://registry.hub.docker.com","dockerhub-creds") {
-                newImage.push("${env.BUILD_NUMBER}")
+                newImage.push("v${env.BUILD_NUMBER}")
                 newImage.push("latest")
             }
         }
+        withCredentials([
+            string(credentialsId: 'PIPECD_API_KEY',     variable: 'PIPECD_API_KEY'),
+            string(credentialsId: 'PIPECD_API_ADDRESS', variable: 'PIPECD_API_ADDRESS')
+        ]) {
+            stage("Notify PipeCD") {
+                // Note this CI runs on your server so your agent needs to have pipectl installed
+                // After pushing the image, notify PipeCD of a new image update event
+                sh """
+                    pipectl event register \
+                    --insecure \
+                    --address=${env.PIPECD_API_ADDRESS} \
+                    --api-key=${env.PIPECD_API_KEY} \
+                    --name=fastchat-image-update \
+                    --data="docker.io/kunalvirwal/portfolio:v${env.BUILD_NUMBER}"
+                """
+            }
+        }
+        stage("Cleanup Last Local Image") {
+            // To clean up the last docker image after a new image is built and any needed layer cache has been used.
+            // This command will always return a non zero error code
+            def previousBuildNo = env.BUILD_NUMBER.toInteger() - 1
+            sh """
+                docker rmi registry.hub.docker.com/kunalvirwal/fastchat:v${previous} || true 
+            """
+        }
         slackSend(
             color: 'good',
-            message: "${env.JOB_NAME} #${env.BUILD_NUMBER}\nJob successfull!!: Pushed image to DockerHub. cc <@kunalvirwal>"
+            message: "${env.JOB_NAME} #${env.BUILD_NUMBER}\nJob successfull!!: Pushed image to DockerHub and notified PipeCD. cc <@kunalvirwal>"
         )
     } catch (e) {
         slackSend(
