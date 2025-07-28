@@ -26,7 +26,7 @@ node {
                     --address=${env.PIPECD_API_ADDRESS} \
                     --api-key=${env.PIPECD_API_KEY} \
                     --name=fastchat-image-update \
-                    --data="docker.io/kunalvirwal/portfolio:v${env.BUILD_NUMBER}"
+                    --data="docker.io/kunalvirwal/fastchat:v${env.BUILD_NUMBER}"
                 """
             }
         }
