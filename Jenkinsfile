@@ -35,7 +35,7 @@ node {
             // This command will always return a non zero error code
             def previousBuildNo = env.BUILD_NUMBER.toInteger() - 1
             sh """
-                docker rmi registry.hub.docker.com/kunalvirwal/fastchat:v${previous} || true 
+                docker rmi registry.hub.docker.com/kunalvirwal/fastchat:v${previousBuildNo} || true 
             """
         }
         slackSend(
